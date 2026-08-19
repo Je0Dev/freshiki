@@ -1,9 +1,12 @@
+use std::collections::HashMap;
+
 use eframe::egui;
 
 use crate::db::Db;
+use crate::keymap::{Action, KeyBindings};
 use crate::model::{Deck, now};
 use crate::state::{EditorState, SearchState, StudyState};
-use crate::ui;
+use crate::ui::export::ExportDialog;
 
 #[derive(Clone, Copy)]
 pub enum View {
@@ -11,6 +14,7 @@ pub enum View {
     Study,
     Editor { deck_id: i64 },
     Search,
+    Settings,
 }
 
 pub struct FreshikiApp {
@@ -23,6 +27,11 @@ pub struct FreshikiApp {
     pub new_deck_name: String,
     pub rename_target: Option<i64>,
     pub rename_name: String,
+    pub bindings: KeyBindings,
+    pub remapping: Option<Action>,
+    pub remap_error: Option<String>,
+    pub export: Option<ExportDialog>,
+    pub media_cache: HashMap<i64, egui::TextureHandle>,
 }
 
 impl FreshikiApp {
@@ -37,7 +46,13 @@ impl FreshikiApp {
             new_deck_name: String::new(),
             rename_target: None,
             rename_name: String::new(),
+            bindings: KeyBindings::defaults(),
+            remapping: None,
+            remap_error: None,
+            export: None,
+            media_cache: HashMap::new(),
         };
+        app.bindings = app.db.load_bindings();
         app.refresh_decks();
         app
     }
@@ -70,33 +85,13 @@ impl FreshikiApp {
     pub fn show_search(&mut self) {
         self.view = View::Search;
     }
-}
 
-impl eframe::App for FreshikiApp {
-    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        egui::Panel::top("topbar").show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.heading("Freshiki");
-                ui.separator();
-                if ui.button("Decks").clicked() {
-                    self.show_decks();
-                }
-                if ui.button("Search").clicked() {
-                    self.show_search();
-                }
-                if matches!(self.view, View::Study | View::Editor { .. })
-                    && ui.button("Back to Decks").clicked()
-                {
-                    self.show_decks();
-                }
-            });
-        });
+    pub fn show_settings(&mut self) {
+        self.remapping = None;
+        self.view = View::Settings;
+    }
 
-        egui::CentralPanel::default().show(ui, |ui| match self.view {
-            View::Decks => ui::decks::show(self, ui),
-            View::Study => ui::study::show(self, ui),
-            View::Editor { deck_id } => ui::editor::show(self, ui, deck_id),
-            View::Search => ui::search::show(self, ui),
-        });
+    pub fn open_export(&mut self, deck_id: Option<i64>, name: &str) {
+        self.export = Some(ExportDialog::new(deck_id, name));
     }
 }

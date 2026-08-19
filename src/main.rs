@@ -3,6 +3,13 @@
 mod app;
 mod db;
 mod db_cards;
+mod db_export;
+mod db_media;
+mod db_settings;
+mod export;
+mod frame;
+mod keymap;
+mod media;
 mod model;
 mod srs;
 mod state;
@@ -21,6 +28,7 @@ fn main() -> eframe::Result {
     if let Some(parent) = db_path.parent() {
         let _ = std::fs::create_dir_all(parent);
     }
+    crate::media::ensure_media_dirs();
     let db = Db::open(&db_path).expect("failed to open database");
 
     let options = eframe::NativeOptions {

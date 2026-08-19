@@ -22,6 +22,7 @@ pub fn show(app: &mut FreshikiApp, ui: &mut egui::Ui) {
     let mut edit: Option<i64> = None;
     let mut rename: Option<i64> = None;
     let mut delete: Option<i64> = None;
+    let mut export: Option<i64> = None;
     egui::ScrollArea::vertical().show(ui, |ui| {
         for deck in &app.decks {
             let count = app.db.card_count(deck.id).unwrap_or(0);
@@ -34,6 +35,9 @@ pub fn show(app: &mut FreshikiApp, ui: &mut egui::Ui) {
                 }
                 if ui.button("Edit").clicked() {
                     edit = Some(deck.id);
+                }
+                if ui.button("Export").clicked() {
+                    export = Some(deck.id);
                 }
                 if ui.button("Rename").clicked() {
                     rename = Some(deck.id);
@@ -50,6 +54,15 @@ pub fn show(app: &mut FreshikiApp, ui: &mut egui::Ui) {
     }
     if let Some(id) = edit {
         app.start_editor(id);
+    }
+    if let Some(id) = export {
+        let name = app
+            .decks
+            .iter()
+            .find(|d| d.id == id)
+            .map(|d| d.name.clone())
+            .unwrap_or_default();
+        app.open_export(Some(id), &name);
     }
     if let Some(id) = rename {
         app.rename_target = Some(id);

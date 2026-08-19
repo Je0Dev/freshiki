@@ -35,6 +35,16 @@ impl Db {
                 due_at INTEGER NOT NULL DEFAULT 0,
                 created_at INTEGER NOT NULL,
                 updated_at INTEGER NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS settings (
+                name TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS media (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                mime_type TEXT NOT NULL,
+                data BLOB NOT NULL,
+                created_at INTEGER NOT NULL
             );",
         )
     }
