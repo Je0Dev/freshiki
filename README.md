@@ -1,18 +1,22 @@
 # Freshiki
 
-A GUI flashcard app with spaced repetition, built in Rust with [egui] and
-SQLite.
+A GUI flashcard app with spaced repetition, built in Rust with
+[egui](https://github.com/emilk/egui) and SQLite.
 
 ## Features
 
-- **Deck management** - create, rename, and delete decks; see card and due counts.
+- **Deck management** - create, rename, and delete decks; see card and due
+  counts.
 - **Study mode** - flip cards and grade them with Anki-style buttons
   (Again / Hard / Good / Easy).
-- **Spaced repetition** - SM-2-inspired scheduler that grows review intervals
-  based on your answers and tracks an ease factor per card.
+- **Spaced repetition** - SM-2-inspired scheduler that grows review intervals.
 - **Card editor** - add, edit, and delete cards (front/back) per deck.
-- **Search & filter** - text search across cards, filtered by deck and status
-  (New / Learning / Due / Known).
+- **Search & filter** - text search across cards, filtered by deck and status.
+- **Keyboard navigation** - flip, move between, and edit cards with the
+  keyboard; every shortcut is remappable in Settings.
+- **Export** - export any deck to CSV or JSON.
+- **Media support** - attach images and audio to cards (stored in SQLite),
+  with managed media folders and drag-and-drop.
 
 ## Requirements
 
@@ -20,40 +24,37 @@ SQLite.
 - On Linux, the usual build essentials (`gcc`/`cc`) plus X11/Wayland and GL
   libraries for the egui window.
 
-## Getting started
+## Clone & build
 
 ```bash
-cargo run
+git clone https://github.com/Je0Dev/freshiki.git
+cd freshiki
+cargo run --release
 ```
 
-The database is created automatically at `~/.local/share/freshiki/app.db`
-on Linux.
+The database and media folders are created at `~/.local/share/freshiki/` on
+Linux (and the platform equivalent on Windows/macOS).
 
-## Project layout
+## Install the binary
 
-```
-src/
-  main.rs      - eframe entry point and window setup
-  app.rs       - top-level app state and navigation
-  model.rs     - Deck / Card types and card status helpers
-  srs.rs       - SM-2 spaced-repetition scheduler (unit-tested)
-  db.rs        - SQLite connection, migrations, deck CRUD
-  db_cards.rs  - card CRUD and search queries
-  state.rs     - study / editor / search UI state
-  ui/          - egui views: decks, study, editor, search
-```
+- **Linux**: `cargo build --release` and run `target/release/freshiki`.
+  Or install it globally with `cargo install --path .`.
+- **Windows**: `cargo build --release`, then run
+  `target\release\freshiki.exe`.
+- **macOS**: `cargo build --release`, then run `target/release/freshiki`.
 
 ## Development
 
 ```bash
 cargo fmt --check   # formatting
 cargo clippy -- -D warnings
-cargo test          # scheduler unit tests
+cargo test          # unit tests
 cargo run           # launch the app
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the git workflow and
-[CONSTRAINTS.md](CONSTRAINTS.md) for code rules.
+[CONSTRAINTS.md](CONSTRAINTS.md) for code rules. Upcoming features live in
+[PLAN.md](PLAN.md).
 
 ## License
 

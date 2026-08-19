@@ -23,6 +23,9 @@ pub struct EditorState {
     pub front: String,
     pub back: String,
     pub editing: Option<i64>,
+    pub selected: Option<i64>,
+    pub media_path: String,
+    pub media_error: Option<String>,
 }
 
 impl EditorState {
@@ -33,6 +36,9 @@ impl EditorState {
             front: String::new(),
             back: String::new(),
             editing: None,
+            selected: None,
+            media_path: String::new(),
+            media_error: None,
         }
     }
 
@@ -40,6 +46,7 @@ impl EditorState {
         self.front = c.front.clone();
         self.back = c.back.clone();
         self.editing = Some(c.id);
+        self.selected = Some(c.id);
     }
 
     pub fn reload(&mut self, db: &Db) {
